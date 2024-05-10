@@ -11,8 +11,8 @@
 .pieces {
   margin: 10px;
   position: relative;
-  width: 150px;
-  height: 650px;
+  width: 15vw;
+  height: 51.5vw;
   left: 0;
   top: 10;
   background-color: #eeeeee;
@@ -45,6 +45,10 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.button {
+
 }
 
 /* this is the new stuff */

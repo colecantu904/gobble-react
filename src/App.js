@@ -56,8 +56,13 @@ export default class Game extends React.Component {
     );
   }
 
+	renderButton(onclick, text, key) {
+		return (
+			<button onClick={onclick} className="button" key={key} >{text}</button>
+		)
+	}
+
   onDragStart = (ev, id) => {
-    console.log("dragstart:", id);
     ev.dataTransfer.setData("id", id);
   };
 
@@ -71,16 +76,12 @@ export default class Game extends React.Component {
     const current = history[history.length - 1];
     const board = JSON.parse(JSON.stringify(current));
     var nextState = this.state.isNext;
-    //console.log(this.state.history);
-
-    console.log(history);
 
     // UPDATE THE BOARD!!!!
     if (!checkWin(board)) {
       let stored = this.state.pieces.filter((piece) => {
         if (piece.id === id) {
           var move = getMove(piece, loc);
-          console.log(move);
           var moves = getPossibleMoves(board, this.state.isNext ? "b" : "r");
           // if this move exists in the list of moves
           if (moves.indexOf(move) > -1) {
@@ -112,6 +113,37 @@ export default class Game extends React.Component {
       });
     }
   };
+		
+	// just make a button object that can take various onClick functions
+	// and push it to a list inside a div when theres a win
+  // just resets the game state to the normal stuff
+	restart = () => {
+		this.setState({
+	    ...this.state,
+	    stepNum: 0,
+	    pieces: [
+	      { id: "l1", size: "l", color: "blue", location: "blue_pieces" },
+	      { id: "l2", size: "l", color: "blue", location: "blue_pieces" },
+	      { id: "l3", size: "l", color: "red", location: "red_pieces" },
+	      { id: "l4", size: "l", color: "red", location: "red_pieces" },
+	      { id: "m1", size: "m", color: "blue", location: "blue_pieces" },
+	      { id: "m2", size: "m", color: "blue", location: "blue_pieces" },
+	      { id: "m3", size: "m", color: "red", location: "red_pieces" },
+	      { id: "m4", size: "m", color: "red", location: "red_pieces" },
+	      { id: "s1", size: "s", color: "blue", location: "blue_pieces" },
+	      { id: "s2", size: "s", color: "blue", location: "blue_pieces" },
+	      { id: "s3", size: "s", color: "red", location: "red_pieces" },
+	      { id: "s4", size: "s", color: "red", location: "red_pieces" },
+	    ],
+	    isNext: true,
+	    history: [[
+        ["", "", ""],
+        ["", "", ""],
+        ["", "", ""],
+	      ]],
+	  });
+	};
+	
 
   render() {
     var sizes = {
@@ -140,7 +172,9 @@ export default class Game extends React.Component {
     const current = this.state.history[this.state.history.length - 1];
     var winner = checkWin(current);
     var status = "";
-    var restart = <div></div>;
+    var restart = [];
+
+    // console.log(this.state.history)
 
     // and then, getPossiblePieces(current).forEach((p) => { }); make the
     // respective piece in the containers.
@@ -182,6 +216,7 @@ export default class Game extends React.Component {
     // handle the game status
     if (winner) {
       status = this.state.isNext ? "red won!" : "blue won!";
+      restart.push(this.renderButton(this.restart, "Play Again?", "b1"))
     } else {
       status = this.state.isNext ? "blue's turn" : "red's turn";
     }
